@@ -18,7 +18,7 @@
   --text-3: #a8a7a1;
   --font: 'DM Sans', sans-serif;
   --font-mono: 'DM Mono', monospace;
- 
+
   /* 선명한 카테고리 색상 */
   --work-bg: #EEF2FF; --work-text: #3730A3; --work-dot: #6366F1;
   --personal-bg: #ECFDF5; --personal-text: #065F46; --personal-dot: #10B981;
@@ -27,7 +27,7 @@
 }
 html, body { background: var(--bg); font-family: var(--font); color: var(--text-1); -webkit-font-smoothing: antialiased; }
 .page { max-width: 720px; margin: 0 auto; padding: 36px 28px 60px; }
- 
+
 /* Header */
 .header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; }
 .month-name { font-size: 30px; font-weight: 300; letter-spacing: -0.8px; line-height: 1; }
@@ -36,13 +36,13 @@ html, body { background: var(--bg); font-family: var(--font); color: var(--text-
 .nav-btn { height: 30px; min-width: 30px; padding: 0 10px; border: 1px solid var(--border); background: transparent; border-radius: 7px; cursor: pointer; color: var(--text-2); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.05em; transition: all 0.12s; }
 .nav-btn:hover { background: var(--surface); border-color: var(--border-md); color: var(--text-1); }
 .divider { height: 1px; background: var(--border); margin-bottom: 14px; }
- 
+
 /* Dow */
 .dow-row { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 5px; }
 .dow { text-align: center; font-family: var(--font-mono); font-size: 10px; color: var(--text-3); padding: 5px 0; letter-spacing: 0.07em; }
 .dow:first-child { color: #EF4444; }
 .dow:last-child { color: #6366F1; }
- 
+
 /* Grid */
 .day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
 .cell { min-height: 74px; padding: 6px 4px 4px; border-radius: 6px; cursor: pointer; transition: background 0.1s; position: relative; }
@@ -55,21 +55,21 @@ html, body { background: var(--bg); font-family: var(--font); color: var(--text-
 .cell.today .num { background: #1a1a18; color: #fff; font-weight: 500; }
 .cell.sunday .num { color: #EF4444; }
 .cell.saturday .num { color: #6366F1; }
- 
+
 /* Event chips */
 .ev { font-size: 9px; padding: 2px 5px; border-radius: 3px; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.5; font-weight: 500; }
 .ev-work     { background: var(--work-bg);     color: var(--work-text); }
 .ev-personal { background: var(--personal-bg); color: var(--personal-text); }
 .ev-meet     { background: var(--meet-bg);     color: var(--meet-text); }
 .ev-memo     { background: var(--memo-bg);     color: var(--memo-text); }
- 
+
 /* Range event: spans multiple days visually */
 .ev.range-start { border-radius: 3px 0 0 3px; margin-right: -2px; }
 .ev.range-mid   { border-radius: 0; margin-right: -2px; margin-left: -2px; opacity: 0.7; }
 .ev.range-end   { border-radius: 0 3px 3px 0; margin-left: -2px; }
- 
+
 .ev-more { font-size: 9px; color: var(--text-3); padding: 1px 5px; margin-top: 1px; font-family: var(--font-mono); }
- 
+
 /* Detail panel */
 .detail { margin-top: 14px; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; display: none; animation: slideIn 0.15s ease; }
 .detail.open { display: block; }
@@ -87,7 +87,7 @@ html, body { background: var(--bg); font-family: var(--font); color: var(--text-
 .ev-del { width: 22px; height: 22px; border: none; background: none; cursor: pointer; color: var(--text-3); font-size: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.1s; }
 .ev-del:hover { background: #FEE2E2; color: #DC2626; }
 .ev-empty { font-size: 12px; color: var(--text-3); text-align: center; padding: 10px 0; font-style: italic; }
- 
+
 /* Add form */
 .add-form { padding: 12px 16px; border-top: 1px solid var(--border); background: #FAFAF8; display: none; }
 .add-form.open { display: block; }
@@ -108,14 +108,14 @@ html, body { background: var(--bg); font-family: var(--font); color: var(--text-
 .mode-toggle { display: flex; gap: 0; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; width: fit-content; }
 .mode-btn { padding: 5px 13px; font-size: 11px; font-family: var(--font-mono); border: none; background: white; cursor: pointer; color: var(--text-2); transition: all 0.1s; }
 .mode-btn.active { background: var(--text-1); color: white; }
- 
+
 /* Footer */
 .footer { margin-top: 18px; padding-top: 13px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
 .legend { display: flex; gap: 12px; flex-wrap: wrap; }
 .leg { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-3); font-family: var(--font-mono); }
 .leg-dot { width: 7px; height: 7px; border-radius: 50%; }
 .week-count { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); letter-spacing: 0.06em; }
- 
+
 @media (max-width: 480px) {
   .page { padding: 18px 12px 40px; }
   .month-name { font-size: 22px; }
@@ -144,7 +144,7 @@ html, body { background: var(--bg); font-family: var(--font); color: var(--text-
     <div class="dow">WED</div><div class="dow">THU</div><div class="dow">FRI</div><div class="dow">SAT</div>
   </div>
   <div class="day-grid" id="grid"></div>
- 
+
   <div class="detail" id="detail">
     <div class="detail-head">
       <span class="detail-date-label" id="detailLabel"></span>
@@ -154,13 +154,13 @@ html, body { background: var(--bg); font-family: var(--font); color: var(--text-
       <div id="evList"></div>
     </div>
     <div class="add-form" id="addForm">
- 
+
       <!-- 단일/기간 토글 -->
       <div class="mode-toggle">
         <button class="mode-btn active" id="modeOne" onclick="setMode('single')">하루</button>
         <button class="mode-btn" id="modeRange" onclick="setMode('range')">기간</button>
       </div>
- 
+
       <div class="form-section">
         <span class="form-label">일정 이름</span>
         <div class="form-row">
@@ -173,7 +173,7 @@ html, body { background: var(--bg); font-family: var(--font); color: var(--text-
           </select>
         </div>
       </div>
- 
+
       <div class="form-section" id="dateSection">
         <span class="form-label" id="dateSectionLabel">날짜</span>
         <div class="date-range-row" id="dateRangeRow">
@@ -182,14 +182,14 @@ html, body { background: var(--bg); font-family: var(--font); color: var(--text-
           <input class="form-date" type="date" id="endDate" style="display:none" />
         </div>
       </div>
- 
+
       <div class="form-row">
         <button class="form-save" onclick="saveEvent()">저장</button>
         <button class="form-cancel" onclick="closeForm()">취소</button>
       </div>
     </div>
   </div>
- 
+
   <div class="footer">
     <div class="legend">
       <div class="leg"><div class="leg-dot" style="background:var(--personal-dot)"></div>개인</div>
@@ -200,7 +200,7 @@ html, body { background: var(--bg); font-family: var(--font); color: var(--text-
     <div class="week-count" id="weekCount"></div>
   </div>
 </div>
- 
+
 <script>
 const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const MONTHS_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
@@ -218,15 +218,15 @@ const today = new Date();
 let cur = new Date(today.getFullYear(), today.getMonth(), 1);
 let selectedKey = null;
 let inputMode = 'single'; // 'single' | 'range'
- 
+
 function toKey(y, m, d) { return `${y}-${m+1}-${d}`; }
 function keyToDate(k) { const [y,m,d]=k.split('-').map(Number); return new Date(y,m-1,d); }
 function dateToKey(dt) { return `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()}`; }
 function fmtDate(dt) { return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`; }
- 
+
 function loadEvents() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); } catch { return []; } }
 function saveEventsRaw(arr) { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
- 
+
 /* Returns {key: [evs]} map for the given year/month */
 function getMonthMap(y, m) {
   const all = loadEvents();
@@ -248,21 +248,21 @@ function getMonthMap(y, m) {
   });
   return map;
 }
- 
+
 /* ── Nav ── */
 function go(d) { cur = new Date(cur.getFullYear(), cur.getMonth()+d, 1); render(); }
 function goToday() { cur = new Date(today.getFullYear(), today.getMonth(), 1); render(); }
- 
+
 /* ── Render ── */
 function render() {
   const y = cur.getFullYear(), m = cur.getMonth();
   document.getElementById('monthName').textContent = MONTHS_EN[m];
   document.getElementById('yearTag').textContent = y;
- 
+
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
   const map = getMonthMap(y, m);
- 
+
   const firstDay = new Date(y, m, 1).getDay();
   const dim = new Date(y, m+1, 0).getDate();
   const dip = new Date(y, m, 0).getDate();
@@ -270,16 +270,16 @@ function render() {
   for (let i = firstDay-1; i>=0; i--) cells.push({d: dip-i, other:true});
   for (let d=1; d<=dim; d++) cells.push({d, other:false});
   while (cells.length%7!==0) cells.push({d: cells.length-dim-firstDay+1, other:true});
- 
+
   document.getElementById('weekCount').textContent = (cells.length/7)+' WEEKS';
- 
+
   cells.forEach(({d, other}, idx) => {
     const dow = idx%7;
     const k = toKey(y, m, d);
     const evs = (!other && map[k]) ? map[k] : [];
     const isToday = !other && d===today.getDate() && m===today.getMonth() && y===today.getFullYear();
     const isSel = !other && k===selectedKey;
- 
+
     const cell = document.createElement('div');
     let cls = 'cell';
     if (other) cls += ' other-month';
@@ -289,11 +289,11 @@ function render() {
     if (!other && evs.length>0) cls += ' has-events';
     if (isSel) cls += ' selected';
     cell.className = cls;
- 
+
     const nw = document.createElement('div'); nw.className='num-wrap';
     const n = document.createElement('div'); n.className='num'; n.textContent=d;
     nw.appendChild(n); cell.appendChild(nw);
- 
+
     evs.slice(0,2).forEach(ev => {
       const tag = document.createElement('div');
       let evCls = 'ev ' + ev.cat;
@@ -312,12 +312,12 @@ function render() {
       more.className='ev-more'; more.textContent='+'+(evs.length-2);
       cell.appendChild(more);
     }
- 
+
     if (!other) cell.onclick = () => selectDay(k, d, y, m);
     grid.appendChild(cell);
   });
 }
- 
+
 /* ── Select day ── */
 function selectDay(k, d, y, m) {
   if (selectedKey===k) { selectedKey=null; document.getElementById('detail').classList.remove('open'); render(); return; }
@@ -329,7 +329,7 @@ function selectDay(k, d, y, m) {
   document.getElementById('detail').classList.add('open');
   render();
 }
- 
+
 /* ── Event list ── */
 function renderEvList(k) {
   const all = loadEvents();
@@ -356,7 +356,7 @@ function renderEvList(k) {
     list.appendChild(row);
   });
 }
- 
+
 /* ── Form mode ── */
 function setMode(m) {
   inputMode = m;
@@ -366,7 +366,7 @@ function setMode(m) {
   document.getElementById('endDate').style.display  = m==='range' ? '' : 'none';
   document.getElementById('dateSectionLabel').textContent = m==='range' ? '기간' : '날짜';
 }
- 
+
 function openForm() {
   // prefill start date from selectedKey
   if (selectedKey) {
@@ -382,7 +382,7 @@ function closeForm() {
   document.getElementById('evInput').value = '';
   setMode('single');
 }
- 
+
 /* ── Save ── */
 function saveEvent() {
   const name = document.getElementById('evInput').value.trim();
@@ -392,7 +392,7 @@ function saveEvent() {
   if (!name) { document.getElementById('evInput').focus(); return; }
   if (!start) { document.getElementById('startDate').focus(); return; }
   if (inputMode==='range' && end && end < start) { alert('종료일이 시작일보다 빠릅니다.'); return; }
- 
+
   const all = loadEvents();
   all.push({ name, cat, start, end: (inputMode==='range' && end) ? end : '' });
   saveEventsRaw(all);
@@ -400,7 +400,7 @@ function saveEvent() {
   if (selectedKey) renderEvList(selectedKey);
   render();
 }
- 
+
 /* ── Delete ── */
 function deleteEvent(idx) {
   const all = loadEvents();
@@ -409,9 +409,9 @@ function deleteEvent(idx) {
   if (selectedKey) renderEvList(selectedKey);
   render();
 }
- 
+
 function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
- 
+
 render();
 </script>
 </body>
