@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>캘린더</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff; --surface: #f7f6f3; --border: #ebebea; --border-light: #f2f1ee;
+  --text-primary: #1a1a18; --text-secondary: #6b6a65; --text-muted: #b0afa9;
+  --font: 'DM Sans', sans-serif; --font-mono: 'DM Mono', monospace; --radius: 8px;
+}
+html, body { background: var(--bg); font-family: var(--font); color: var(--text-primary); -webkit-font-smoothing: antialiased; }
+.page { max-width: 720px; margin: 0 auto; padding: 40px 32px 60px; }
+.header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; }
+.month-name { font-size: 32px; font-weight: 300; letter-spacing: -1px; line-height: 1; }
+.year-tag { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-left: 8px; letter-spacing: 0.1em; }
+.nav { display: flex; gap: 2px; }
+.nav-btn { height: 32px; min-width: 32px; padding: 0 10px; border: 1px solid var(--border); background: transparent; border-radius: var(--radius); cursor: pointer; color: var(--text-secondary); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.05em; transition: all 0.12s; }
+.nav-btn:hover { background: var(--surface); border-color: #d8d7d2; color: var(--text-primary); }
+.divider { height: 1px; background: var(--border); margin-bottom: 16px; }
+.dow-row { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 6px; }
+.dow { text-align: center; font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); padding: 6px 0; letter-spacing: 0.08em; }
+.dow:first-child { color: #c0a090; } .dow:last-child { color: #90a8c0; }
+.day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.cell { min-height: 76px; padding: 7px 5px 5px; border-radius: 6px; cursor: pointer; transition: background 0.1s; }
+.cell:hover { background: var(--surface); }
+.cell.other-month { opacity: 0.28; pointer-events: none; }
+.cell.has-events { border: 1px solid var(--border-light); }
+.cell.selected { background: #f5f4f0; border: 1px solid #d8d7d2; }
+.num-wrap { display: flex; justify-content: center; margin-bottom: 4px; }
+.num { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 400; color: var(--text-secondary); border-radius: 50%; font-family: var(--font-mono); }
+.cell.today .num { background: #1a1a18; color: #fff; font-weight: 500; }
+.cell.sunday .num { color: #b07060; } .cell.saturday .num { color: #6080b0; }
+.ev { font-size: 9.5px; padding: 2px 5px; border-radius: 3px; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.5; }
+.ev-work { background: #f0ede6; color: #5a5550; }
+.ev-personal { background: #e8f0f8; color: #2d5a80; }
+.ev-meet { background: #edf5ec; color: #2d6040; }
+.ev-memo { background: #f5ecf0; color: #703050; }
+.ev-more { font-size: 9px; color: var(--text-muted); padding: 1px 5px; margin-top: 1px; font-family: var(--font-mono); }
+.detail { margin-top: 16px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: none; }
+.detail.open { display: block; }
+.detail-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: var(--surface); border-bottom: 1px solid var(--border); }
+.detail-date-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); letter-spacing: 0.06em; }
+.detail-add-btn { font-size: 12px; padding: 5px 12px; border: 1px solid var(--border); background: white; border-radius: 6px; cursor: pointer; color: var(--text-secondary); transition: all 0.1s; }
+.detail-add-btn:hover { background: var(--border); color: var(--text-primary); }
+.detail-body { padding: 12px 18px; min-height: 56px; }
+.ev-row { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 6px; background: var(--surface); margin-bottom: 6px; }
+.ev-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.ev-name { flex: 1; font-size: 13px; color: var(--text-primary); }
+.ev-cat-badge { font-size: 10px; font-family: var(--font-mono); color: var(--text-muted); padding: 2px 7px; background: var(--bg); border-radius: 4px; border: 1px solid var(--border); }
+.ev-del { width: 22px; height: 22px; border: none; background: none; cursor: pointer; color: var(--text-muted); font-size: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.1s; }
+.ev-del:hover { background: #fee; color: #c04040; }
+.ev-empty { font-size: 12px; color: var(--text-muted); text-align: center; padding: 8px 0; font-style: italic; }
+.add-form { padding: 14px 18px; border-top: 1px solid var(--border); background: #fafaf8; display: none; }
+.add-form.open { display: block; }
+.form-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.form-input { flex: 1; min-width: 160px; height: 34px; border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; font-size: 13px; font-family: var(--font); color: var(--text-primary); background: white; outline: none; transition: border 0.1s; }
+.form-input:focus { border-color: #b0afa9; }
+.form-select { height: 34px; border: 1px solid var(--border); border-radius: 6px; padding: 0 8px; font-size: 12px; font-family: var(--font-mono); color: var(--text-secondary); background: white; cursor: pointer; outline: none; }
+.form-save { height: 34px; padding: 0 16px; background: #1a1a18; color: white; border: none; border-radius: 6px; font-size: 12px; font-family: var(--font); cursor: pointer; transition: opacity 0.1s; }
+.form-save:hover { opacity: 0.8; }
+.form-cancel { height: 34px; padding: 0 12px; background: none; color: var(--text-muted); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-family: var(--font); cursor: pointer; }
+.form-cancel:hover { background: var(--surface); }
+.footer { margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; }
+.leg { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); }
+.leg-dot { width: 6px; height: 6px; border-radius: 2px; }
+.week-count { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; }
+@media (max-width: 480px) {
+  .page { padding: 20px 14px 40px; } .month-name { font-size: 24px; } .cell { min-height: 58px; }
+  .form-row { flex-direction: column; align-items: stretch; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div>
+      <span class="month-name" id="monthName"></span>
+      <span class="year-tag" id="yearTag"></span>
+    </div>
+    <div class="nav">
+      <button class="nav-btn" onclick="go(-1)">←</button>
+      <button class="nav-btn" onclick="goToday()">TODAY</button>
+      <button class="nav-btn" onclick="go(1)">→</button>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="dow-row">
+    <div class="dow">SUN</div><div class="dow">MON</div><div class="dow">TUE</div>
+    <div class="dow">WED</div><div class="dow">THU</div><div class="dow">FRI</div><div class="dow">SAT</div>
+  </div>
+  <div class="day-grid" id="grid"></div>
+  <div class="detail" id="detail">
+    <div class="detail-head">
+      <span class="detail-date-label" id="detailLabel"></span>
+      <button class="detail-add-btn" onclick="toggleForm()">+ 일정 추가</button>
+    </div>
+    <div class="detail-body" id="detailBody">
+      <div id="evList"></div>
+    </div>
+    <div class="add-form" id="addForm">
+      <div class="form-row">
+        <input class="form-input" id="evInput" placeholder="일정 이름을 입력하세요" onkeydown="if(event.key==='Enter') saveEvent()" />
+        <select class="form-select" id="evCat">
+          <option value="ev-work">업무</option>
+          <option value="ev-personal">개인</option>
+          <option value="ev-meet">약속</option>
+          <option value="ev-memo">메모</option>
+        </select>
+        <button class="form-save" onclick="saveEvent()">저장</button>
+        <button class="form-cancel" onclick="toggleForm()">취소</button>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="legend">
+      <div class="leg"><div class="leg-dot" style="background:#d8d0c4"></div>업무</div>
+      <div class="leg"><div class="leg-dot" style="background:#b8cfe0"></div>개인</div>
+      <div class="leg"><div class="leg-dot" style="background:#b8d8b4"></div>약속</div>
+      <div class="leg"><div class="leg-dot" style="background:#e0b8cc"></div>메모</div>
+    </div>
+    <div class="week-count" id="weekCount"></div>
+  </div>
+</div>
+<script>
+const MONTHS_EN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTHS_KR=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+const DAYS_KR=['일','월','화','수','목','금','토'];
+const CAT_LABEL={'ev-work':'업무','ev-personal':'개인','ev-meet':'약속','ev-memo':'메모'};
+const DOT_COLORS={'ev-work':'#c8b8a8','ev-personal':'#8ab0d0','ev-meet':'#88c080','ev-memo':'#c888a8'};
+const STORAGE_KEY='cal_events_v1';
+const today=new Date();
+let cur=new Date(today.getFullYear(),today.getMonth(),1);
+let selectedKey=null;
+
+function loadEvents(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')}catch{return{}}}
+function saveEvents(d){localStorage.setItem(STORAGE_KEY,JSON.stringify(d))}
+function go(d){cur=new Date(cur.getFullYear(),cur.getMonth()+d,1);render()}
+function goToday(){cur=new Date(today.getFullYear(),today.getMonth(),1);render()}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function render(){
+  const y=cur.getFullYear(),m=cur.getMonth();
+  document.getElementById('monthName').textContent=MONTHS_EN[m];
+  document.getElementById('yearTag').textContent=y;
+  const grid=document.getElementById('grid');
+  grid.innerHTML='';
+  const events=loadEvents();
+  const firstDay=new Date(y,m,1).getDay();
+  const dim=new Date(y,m+1,0).getDate();
+  const dip=new Date(y,m,0).getDate();
+  let cells=[];
+  for(let i=firstDay-1;i>=0;i--)cells.push({d:dip-i,other:true});
+  for(let d=1;d<=dim;d++)cells.push({d,other:false});
+  while(cells.length%7!==0)cells.push({d:cells.length-dim-firstDay+1,other:true});
+  document.getElementById('weekCount').textContent=(cells.length/7)+' WEEKS';
+
+  cells.forEach(({d,other},idx)=>{
+    const dow=idx%7;
+    const key=`${y}-${m+1}-${d}`;
+    const evs=(!other&&events[key])?events[key]:[];
+    const isToday=!other&&d===today.getDate()&&m===today.getMonth()&&y===today.getFullYear();
+    const isSel=!other&&key===selectedKey;
+    const cell=document.createElement('div');
+    let cls='cell';
+    if(other)cls+=' other-month';
+    if(isToday)cls+=' today';
+    if(dow===0)cls+=' sunday';
+    if(dow===6)cls+=' saturday';
+    if(!other&&evs.length>0)cls+=' has-events';
+    if(isSel)cls+=' selected';
+    cell.className=cls;
+    const nw=document.createElement('div');nw.className='num-wrap';
+    const n=document.createElement('div');n.className='num';n.textContent=d;
+    nw.appendChild(n);cell.appendChild(nw);
+    evs.slice(0,2).forEach(ev=>{
+      const tag=document.createElement('div');tag.className='ev '+ev.c;tag.textContent=ev.t;cell.appendChild(tag);
+    });
+    if(evs.length>2){const more=document.createElement('div');more.className='ev-more';more.textContent='+'+(evs.length-2);cell.appendChild(more);}
+    if(!other)cell.onclick=()=>selectDay(key,d,y,m);
+    grid.appendChild(cell);
+  });
+}
+
+function selectDay(key,d,y,m){
+  if(selectedKey===key){selectedKey=null;document.getElementById('detail').classList.remove('open');render();return;}
+  selectedKey=key;
+  const dow=new Date(y,m,d).getDay();
+  document.getElementById('detailLabel').textContent=`${y}년 ${MONTHS_KR[m]} ${d}일 (${DAYS_KR[dow]})`;
+  document.getElementById('addForm').classList.remove('open');
+  document.getElementById('evInput').value='';
+  renderEvList(key);
+  document.getElementById('detail').classList.add('open');
+  render();
+}
+
+function renderEvList(key){
+  const evs=(loadEvents()[key]||[]);
+  const list=document.getElementById('evList');
+  list.innerHTML='';
+  if(evs.length===0){list.innerHTML='<div class="ev-empty">등록된 일정이 없어요</div>';return;}
+  evs.forEach((ev,i)=>{
+    const row=document.createElement('div');row.className='ev-row';
+    row.innerHTML=`<div class="ev-dot" style="background:${DOT_COLORS[ev.c]}"></div><span class="ev-name">${esc(ev.t)}</span><span class="ev-cat-badge">${CAT_LABEL[ev.c]}</span><button class="ev-del" onclick="deleteEvent('${key}',${i})">×</button>`;
+    list.appendChild(row);
+  });
+}
+
+function toggleForm(){
+  const form=document.getElementById('addForm');
+  form.classList.toggle('open');
+  if(form.classList.contains('open'))setTimeout(()=>document.getElementById('evInput').focus(),50);
+}
+
+function saveEvent(){
+  const input=document.getElementById('evInput');
+  const cat=document.getElementById('evCat').value;
+  const text=input.value.trim();
+  if(!text||!selectedKey)return;
+  const events=loadEvents();
+  if(!events[selectedKey])events[selectedKey]=[];
+  events[selectedKey].push({t:text,c:cat});
+  saveEvents(events);
+  input.value='';
+  document.getElementById('addForm').classList.remove('open');
+  renderEvList(selectedKey);
+  render();
+}
+
+function deleteEvent(key,idx){
+  const events=loadEvents();
+  if(!events[key])return;
+  events[key].splice(idx,1);
+  if(events[key].length===0)delete events[key];
+  saveEvents(events);
+  renderEvList(key);
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
