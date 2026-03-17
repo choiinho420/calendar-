@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>캘린더</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #f7f6f3;
+    --border: #ebebea;
+    --border-light: #f2f1ee;
+    --text-primary: #1a1a18;
+    --text-secondary: #6b6a65;
+    --text-muted: #b0afa9;
+    --accent: #1a1a18;
+    --today-bg: #1a1a18;
+    --today-text: #ffffff;
+    --ev-work-bg: #f0ede6;
+    --ev-work-text: #5a5550;
+    --ev-personal-bg: #e8f0f8;
+    --ev-personal-text: #2d5a80;
+    --ev-meet-bg: #edf5ec;
+    --ev-meet-text: #2d6040;
+    --ev-memo-bg: #f5ecf0;
+    --ev-memo-text: #703050;
+    --radius: 8px;
+    --font: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  html, body {
+    background: var(--bg);
+    font-family: var(--font);
+    color: var(--text-primary);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 32px 60px;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+
+  .header-left { display: flex; flex-direction: column; gap: 2px; }
+
+  .month-name {
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: -1px;
+    color: var(--text-primary);
+    line-height: 1;
+  }
+
+  .year-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .nav-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    background: transparent;
+    border-radius: var(--radius);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    transition: all 0.15s ease;
+    font-size: 13px;
+  }
+
+  .nav-btn:hover {
+    background: var(--surface);
+    border-color: #d8d7d2;
+    color: var(--text-primary);
+  }
+
+  .nav-today {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 400;
+    padding: 0 10px;
+    letter-spacing: 0.05em;
+    width: auto;
+  }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 16px;
+  }
+
+  /* ── Day of week header ── */
+  .dow-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 8px;
+  }
+
+  .dow {
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--text-muted);
+    padding: 6px 0;
+    letter-spacing: 0.08em;
+  }
+
+  .dow:first-child { color: #c0a090; }
+  .dow:last-child  { color: #90a8c0; }
+
+  /* ── Day grid ── */
+  .day-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+  }
+
+  .cell {
+    min-height: 76px;
+    padding: 7px 5px 5px;
+    border-radius: 6px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+
+  .cell:hover { background: var(--surface); }
+
+  .cell.other-month { opacity: 0.3; }
+  .cell.other-month:hover { opacity: 0.5; }
+
+  .cell.has-border {
+    border: 1px solid var(--border-light);
+  }
+
+  /* ── Day number ── */
+  .num-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3px;
+  }
+
+  .num {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    border-radius: 50%;
+    line-height: 1;
+    font-family: var(--font-mono);
+  }
+
+  .cell.today .num {
+    background: var(--today-bg);
+    color: var(--today-text);
+    font-weight: 500;
+  }
+
+  .cell.sunday .num  { color: #b07060; }
+  .cell.saturday .num { color: #6080b0; }
+
+  /* ── Events ── */
+  .ev {
+    font-size: 9.5px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  .ev-work     { background: var(--ev-work-bg);     color: var(--ev-work-text); }
+  .ev-personal { background: var(--ev-personal-bg); color: var(--ev-personal-text); }
+  .ev-meet     { background: var(--ev-meet-bg);     color: var(--ev-meet-text); }
+  .ev-memo     { background: var(--ev-memo-bg);     color: var(--ev-memo-text); }
+
+  .ev-more {
+    font-size: 9px;
+    color: var(--text-muted);
+    padding: 1px 5px;
+    margin-top: 1px;
+    font-family: var(--font-mono);
+  }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .legend {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .leg {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+  }
+
+  .leg-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 2px;
+  }
+
+  .week-count {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Selected day detail ── */
+  .detail-panel {
+    margin-top: 20px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    display: none;
+    animation: fadeIn 0.15s ease;
+  }
+
+  .detail-panel.visible { display: block; }
+
+  .detail-date {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.06em;
+  }
+
+  .detail-events { display: flex; flex-direction: column; gap: 6px; }
+
+  .detail-ev {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+
+  .detail-ev-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .detail-empty {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    .page { padding: 24px 16px 40px; }
+    .month-name { font-size: 24px; }
+    .cell { min-height: 58px; }
+    .ev { font-size: 8.5px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-left">
+      <span class="month-name" id="monthName">March</span>
+      <span class="year-tag" id="yearTag">2026</span>
+    </div>
+    <div class="nav">
+      <button class="nav-btn" onclick="go(-1)" title="이전 달">←</button>
+      <button class="nav-btn nav-today" onclick="goToday()">TODAY</button>
+      <button class="nav-btn" onclick="go(1)"  title="다음 달">→</button>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="dow-row">
+    <div class="dow">SUN</div>
+    <div class="dow">MON</div>
+    <div class="dow">TUE</div>
+    <div class="dow">WED</div>
+    <div class="dow">THU</div>
+    <div class="dow">FRI</div>
+    <div class="dow">SAT</div>
+  </div>
+
+  <div class="day-grid" id="grid"></div>
+
+  <div class="footer">
+    <div class="legend">
+      <div class="leg"><div class="leg-dot" style="background:#d8d0c4"></div>업무</div>
+      <div class="leg"><div class="leg-dot" style="background:#b8cfe0"></div>개인</div>
+      <div class="leg"><div class="leg-dot" style="background:#b8d8b4"></div>약속</div>
+      <div class="leg"><div class="leg-dot" style="background:#e0b8cc"></div>메모</div>
+    </div>
+    <div class="week-count" id="weekCount"></div>
+  </div>
+
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-date" id="detailDate"></div>
+    <div class="detail-events" id="detailEvents"></div>
+  </div>
+
+</div>
+
+<script>
+const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTHS_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+const DAYS_KR   = ['일','월','화','수','목','금','토'];
+
+/* ── 여기에 일정을 추가하세요 ──────────────────────────────────
+   형식: 'YYYY-M-D': [{t: '일정 이름', c: '카테고리'}]
+   카테고리: 'ev-work'(업무) | 'ev-personal'(개인) | 'ev-meet'(약속) | 'ev-memo'(메모)
+────────────────────────────────────────────────────────────── */
+const EVENTS = {
+  '2026-3-4':  [{t:'팀 미팅', c:'ev-work'}],
+  '2026-3-9':  [{t:'수영', c:'ev-personal'}],
+  '2026-3-14': [{t:'친구 약속', c:'ev-meet'}],
+  '2026-3-17': [{t:'오늘', c:'ev-personal'}],
+  '2026-3-19': [{t:'독서', c:'ev-personal'}, {t:'보고서 제출', c:'ev-work'}],
+  '2026-3-21': [{t:'부모님 생신', c:'ev-memo'}],
+  '2026-3-25': [{t:'팀 워크샵', c:'ev-work'}],
+  '2026-3-28': [{t:'운동', c:'ev-personal'}],
+  '2026-3-31': [{t:'월말 정산', c:'ev-work'}],
+};
+
+const DOT_COLORS = {
+  'ev-work': '#c8b8a8', 'ev-personal': '#8ab0d0',
+  'ev-meet': '#88c080', 'ev-memo': '#c888a8'
+};
+
+let cur = new Date(2026, 2, 1);
+const today = new Date();
+let selectedKey = null;
+
+function go(d) { cur = new Date(cur.getFullYear(), cur.getMonth() + d, 1); render(); }
+function goToday() { cur = new Date(today.getFullYear(), today.getMonth(), 1); render(); }
+
+function render() {
+  const y = cur.getFullYear(), m = cur.getMonth();
+  document.getElementById('monthName').textContent = MONTHS_EN[m];
+  document.getElementById('yearTag').textContent   = y;
+
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  const firstDay    = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const daysInPrev  = new Date(y, m, 0).getDate();
+
+  let cells = [];
+  for (let i = firstDay - 1; i >= 0; i--)
+    cells.push({d: daysInPrev - i, other: true});
+  for (let d = 1; d <= daysInMonth; d++)
+    cells.push({d, other: false});
+  while (cells.length % 7 !== 0)
+    cells.push({d: cells.length - daysInMonth - firstDay + 1, other: true});
+
+  const weeks = cells.length / 7;
+  document.getElementById('weekCount').textContent = weeks + ' WEEKS';
+
+  cells.forEach(({d, other}, idx) => {
+    const dow = idx % 7;
+    const isToday = !other && d === today.getDate() && m === today.getMonth() && y === today.getFullYear();
+    const key = `${y}-${m+1}-${d}`;
+    const evs = (!other && EVENTS[key]) ? EVENTS[key] : [];
+
+    const cell = document.createElement('div');
+    let cls = 'cell';
+    if (other) cls += ' other-month';
+    if (isToday) cls += ' today';
+    if (dow === 0) cls += ' sunday';
+    if (dow === 6) cls += ' saturday';
+    if (!other && evs.length > 0) cls += ' has-border';
+    cell.className = cls;
+
+    const numWrap = document.createElement('div');
+    numWrap.className = 'num-wrap';
+    const num = document.createElement('div');
+    num.className = 'num';
+    num.textContent = d;
+    numWrap.appendChild(num);
+    cell.appendChild(numWrap);
+
+    evs.slice(0, 2).forEach(ev => {
+      const tag = document.createElement('div');
+      tag.className = 'ev ' + ev.c;
+      tag.textContent = ev.t;
+      cell.appendChild(tag);
+    });
+
+    if (evs.length > 2) {
+      const more = document.createElement('div');
+      more.className = 'ev-more';
+      more.textContent = '+' + (evs.length - 2);
+      cell.appendChild(more);
+    }
+
+    if (!other) {
+      cell.onclick = () => toggleDetail(key, d, y, m, evs);
+    }
+
+    grid.appendChild(cell);
+  });
+
+  closeDetail();
+}
+
+function toggleDetail(key, d, y, m, evs) {
+  const panel  = document.getElementById('detailPanel');
+  const dateEl = document.getElementById('detailDate');
+  const evsEl  = document.getElementById('detailEvents');
+
+  if (selectedKey === key) { closeDetail(); return; }
+  selectedKey = key;
+
+  const dow = new Date(y, m, d).getDay();
+  dateEl.textContent = `${y}년 ${MONTHS_KR[m]} ${d}일 (${DAYS_KR[dow]})`;
+
+  evsEl.innerHTML = '';
+  if (evs.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'detail-empty';
+    empty.textContent = '등록된 일정이 없습니다';
+    evsEl.appendChild(empty);
+  } else {
+    evs.forEach(ev => {
+      const row = document.createElement('div');
+      row.className = 'detail-ev';
+      const dot = document.createElement('div');
+      dot.className = 'detail-ev-dot';
+      dot.style.background = DOT_COLORS[ev.c] || '#ccc';
+      const name = document.createElement('span');
+      name.textContent = ev.t;
+      row.appendChild(dot);
+      row.appendChild(name);
+      evsEl.appendChild(row);
+    });
+  }
+
+  panel.classList.add('visible');
+}
+
+function closeDetail() {
+  selectedKey = null;
+  document.getElementById('detailPanel').classList.remove('visible');
+}
+
+render();
+</script>
+</body>
+</html>
