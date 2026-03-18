@@ -9,43 +9,33 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #ffffff;
-  --surface: #f7f6f3;
-  --border: #e8e7e3;
-  --border-md: #d0cfc9;
-  --text-1: #1a1a18;
-  --text-2: #5a5955;
-  --text-3: #a8a7a1;
-  --font: 'DM Sans', sans-serif;
-  --font-mono: 'DM Mono', monospace;
-
-  /* 선명한 카테고리 색상 */
+  --bg: #ffffff; --surface: #f7f6f3; --border: #e8e7e3; --border-md: #d0cfc9;
+  --text-1: #1a1a18; --text-2: #5a5955; --text-3: #a8a7a1;
+  --font: 'DM Sans', sans-serif; --font-mono: 'DM Mono', monospace;
   --work-bg: #EEF2FF; --work-text: #3730A3; --work-dot: #6366F1;
   --personal-bg: #ECFDF5; --personal-text: #065F46; --personal-dot: #10B981;
   --meet-bg: #FFF7ED; --meet-text: #9A3412; --meet-dot: #F97316;
   --memo-bg: #FDF4FF; --memo-text: #6B21A8; --memo-dot: #A855F7;
+  --anni-bg: #FFF1F2; --anni-text: #9F1239; --anni-dot: #F43F5E;
 }
 html, body { background: var(--bg); font-family: var(--font); color: var(--text-1); -webkit-font-smoothing: antialiased; }
 .page { max-width: 720px; margin: 0 auto; padding: 36px 28px 60px; }
-
-/* Header */
 .header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; }
 .month-name { font-size: 30px; font-weight: 300; letter-spacing: -0.8px; line-height: 1; }
 .year-tag { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); margin-left: 8px; letter-spacing: 0.1em; }
-.nav { display: flex; gap: 2px; }
+.nav { display: flex; gap: 2px; align-items: center; }
 .nav-btn { height: 30px; min-width: 30px; padding: 0 10px; border: 1px solid var(--border); background: transparent; border-radius: 7px; cursor: pointer; color: var(--text-2); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.05em; transition: all 0.12s; }
 .nav-btn:hover { background: var(--surface); border-color: var(--border-md); color: var(--text-1); }
+.sync-btn { width: 28px; height: 28px; border: 1px solid var(--border); background: transparent; border-radius: 7px; cursor: pointer; color: var(--text-3); font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all 0.12s; margin-left: 4px; }
+.sync-btn:hover { color: var(--text-1); background: var(--surface); }
+.sync-btn.spinning { animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 .divider { height: 1px; background: var(--border); margin-bottom: 14px; }
-
-/* Dow */
 .dow-row { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 5px; }
 .dow { text-align: center; font-family: var(--font-mono); font-size: 10px; color: var(--text-3); padding: 5px 0; letter-spacing: 0.07em; }
-.dow:first-child { color: #EF4444; }
-.dow:last-child { color: #6366F1; }
-
-/* Grid */
+.dow:first-child { color: #EF4444; } .dow:last-child { color: #6366F1; }
 .day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
-.cell { min-height: 74px; padding: 6px 4px 4px; border-radius: 6px; cursor: pointer; transition: background 0.1s; position: relative; }
+.cell { min-height: 74px; padding: 6px 4px 4px; border-radius: 6px; cursor: pointer; transition: background 0.1s; }
 .cell:hover { background: var(--surface); }
 .cell.other-month { opacity: 0.22; pointer-events: none; }
 .cell.has-events { border: 1px solid var(--border); }
@@ -53,61 +43,37 @@ html, body { background: var(--bg); font-family: var(--font); color: var(--text-
 .num-wrap { display: flex; justify-content: center; margin-bottom: 3px; }
 .num { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 400; color: var(--text-2); border-radius: 50%; font-family: var(--font-mono); }
 .cell.today .num { background: #1a1a18; color: #fff; font-weight: 500; }
-.cell.sunday .num { color: #EF4444; }
-.cell.saturday .num { color: #6366F1; }
-
-/* Event chips */
+.cell.sunday .num { color: #EF4444; } .cell.saturday .num { color: #6366F1; }
 .ev { font-size: 9px; padding: 2px 5px; border-radius: 3px; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.5; font-weight: 500; }
-.ev-work     { background: var(--work-bg);     color: var(--work-text); }
-.ev-personal { background: var(--personal-bg); color: var(--personal-text); }
-.ev-meet     { background: var(--meet-bg);     color: var(--meet-text); }
-.ev-memo     { background: var(--memo-bg);     color: var(--memo-text); }
-
-/* Range event: spans multiple days visually */
-.ev.range-start { border-radius: 3px 0 0 3px; margin-right: -2px; }
-.ev.range-mid   { border-radius: 0; margin-right: -2px; margin-left: -2px; opacity: 0.7; }
-.ev.range-end   { border-radius: 0 3px 3px 0; margin-left: -2px; }
-
+.ev-업무   { background: var(--work-bg);     color: var(--work-text); }
+.ev-개인   { background: var(--personal-bg); color: var(--personal-text); }
+.ev-약속   { background: var(--meet-bg);     color: var(--meet-text); }
+.ev-기타   { background: var(--memo-bg);     color: var(--memo-text); }
+.ev-기념일 { background: var(--anni-bg);     color: var(--anni-text); }
 .ev-more { font-size: 9px; color: var(--text-3); padding: 1px 5px; margin-top: 1px; font-family: var(--font-mono); }
 
 /* Detail panel */
 .detail { margin-top: 14px; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; display: none; animation: slideIn 0.15s ease; }
 .detail.open { display: block; }
-@keyframes slideIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+@keyframes slideIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
 .detail-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
 .detail-date-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-2); letter-spacing: 0.06em; }
-.detail-add-btn { font-size: 11px; padding: 5px 12px; border: 1px solid var(--border); background: white; border-radius: 6px; cursor: pointer; color: var(--text-2); transition: all 0.1s; }
-.detail-add-btn:hover { background: var(--text-1); color: white; border-color: var(--text-1); }
+.detail-notion-btn { font-size: 11px; padding: 5px 12px; border: 1px solid var(--border); background: white; border-radius: 6px; cursor: pointer; color: var(--text-2); text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: all 0.1s; }
+.detail-notion-btn:hover { background: var(--text-1); color: white; border-color: var(--text-1); }
 .detail-body { padding: 10px 16px 14px; min-height: 50px; }
-.ev-row { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: 7px; background: var(--surface); margin-bottom: 5px; }
+.ev-row { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 7px; background: var(--surface); margin-bottom: 5px; }
 .ev-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 .ev-name { flex: 1; font-size: 13px; color: var(--text-1); }
 .ev-range-tag { font-size: 9px; font-family: var(--font-mono); color: var(--text-3); background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
 .ev-cat-badge { font-size: 9.5px; font-family: var(--font-mono); padding: 2px 7px; border-radius: 4px; font-weight: 500; }
-.ev-del { width: 22px; height: 22px; border: none; background: none; cursor: pointer; color: var(--text-3); font-size: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.1s; }
-.ev-del:hover { background: #FEE2E2; color: #DC2626; }
 .ev-empty { font-size: 12px; color: var(--text-3); text-align: center; padding: 10px 0; font-style: italic; }
 
-/* Add form */
-.add-form { padding: 12px 16px; border-top: 1px solid var(--border); background: #FAFAF8; display: none; }
-.add-form.open { display: block; }
-.form-section { margin-bottom: 10px; }
-.form-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); letter-spacing: 0.06em; margin-bottom: 5px; display: block; }
-.form-row { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
-.form-input { flex: 1; min-width: 140px; height: 33px; border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; font-size: 13px; font-family: var(--font); color: var(--text-1); background: white; outline: none; transition: border 0.1s; }
-.form-input:focus { border-color: var(--border-md); }
-.form-date { width: 130px; height: 33px; border: 1px solid var(--border); border-radius: 6px; padding: 0 8px; font-size: 12px; font-family: var(--font-mono); color: var(--text-2); background: white; cursor: pointer; outline: none; }
-.form-date:focus { border-color: var(--border-md); }
-.form-select { height: 33px; border: 1px solid var(--border); border-radius: 6px; padding: 0 8px; font-size: 12px; font-family: var(--font-mono); color: var(--text-2); background: white; cursor: pointer; outline: none; }
-.form-save { height: 33px; padding: 0 16px; background: #1a1a18; color: white; border: none; border-radius: 6px; font-size: 12px; font-family: var(--font); cursor: pointer; transition: opacity 0.1s; }
-.form-save:hover { opacity: 0.75; }
-.form-cancel { height: 33px; padding: 0 11px; background: none; color: var(--text-3); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-family: var(--font); cursor: pointer; }
-.form-cancel:hover { background: var(--surface); }
-.date-range-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
-.date-sep { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); }
-.mode-toggle { display: flex; gap: 0; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; width: fit-content; }
-.mode-btn { padding: 5px 13px; font-size: 11px; font-family: var(--font-mono); border: none; background: white; cursor: pointer; color: var(--text-2); transition: all 0.1s; }
-.mode-btn.active { background: var(--text-1); color: white; }
+/* Status bar */
+.status-bar { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-top: 1px solid var(--border); background: var(--surface); font-family: var(--font-mono); font-size: 10px; color: var(--text-3); }
+.status-dot { width: 5px; height: 5px; border-radius: 50%; background: #10B981; }
+.status-dot.error { background: #EF4444; }
+.status-dot.loading { background: #F59E0B; animation: pulse 1s ease infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
 
 /* Footer */
 .footer { margin-top: 18px; padding-top: 13px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
@@ -116,17 +82,26 @@ html, body { background: var(--bg); font-family: var(--font); color: var(--text-
 .leg-dot { width: 7px; height: 7px; border-radius: 50%; }
 .week-count { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); letter-spacing: 0.06em; }
 
+/* Config panel */
+.config-panel { margin-top: 14px; padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 9px; display: none; }
+.config-panel.open { display: block; }
+.config-title { font-family: var(--font-mono); font-size: 11px; color: var(--text-2); margin-bottom: 12px; letter-spacing: 0.06em; }
+.config-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+.config-label { font-size: 12px; color: var(--text-2); min-width: 80px; }
+.config-input { flex: 1; min-width: 200px; height: 32px; border: 1px solid var(--border-md); border-radius: 6px; padding: 0 10px; font-size: 12px; font-family: var(--font-mono); color: var(--text-1); background: white; outline: none; }
+.config-input:focus { border-color: #6366F1; }
+.config-save { height: 32px; padding: 0 16px; background: #1a1a18; color: white; border: none; border-radius: 6px; font-size: 12px; cursor: pointer; }
+.config-save:hover { opacity: 0.75; }
+.config-note { font-size: 10px; color: var(--text-3); font-family: var(--font-mono); margin-top: 8px; line-height: 1.6; }
+
 @media (max-width: 480px) {
-  .page { padding: 18px 12px 40px; }
-  .month-name { font-size: 22px; }
-  .cell { min-height: 56px; }
-  .form-row, .date-range-row { flex-direction: column; align-items: stretch; }
-  .form-date, .form-input, .form-select { width: 100%; }
+  .page { padding: 18px 12px 40px; } .month-name { font-size: 22px; } .cell { min-height: 56px; }
 }
 </style>
 </head>
 <body>
 <div class="page">
+
   <div class="header">
     <div>
       <span class="month-name" id="monthName"></span>
@@ -136,57 +111,50 @@ html, body { background: var(--bg); font-family: var(--font); color: var(--text-
       <button class="nav-btn" onclick="go(-1)">←</button>
       <button class="nav-btn" onclick="goToday()">TODAY</button>
       <button class="nav-btn" onclick="go(1)">→</button>
+      <button class="sync-btn" id="syncBtn" onclick="fetchEvents()" title="새로고침">↻</button>
+      <button class="nav-btn" onclick="toggleConfig()" title="설정">⚙</button>
     </div>
   </div>
+
   <div class="divider"></div>
+
   <div class="dow-row">
     <div class="dow">SUN</div><div class="dow">MON</div><div class="dow">TUE</div>
     <div class="dow">WED</div><div class="dow">THU</div><div class="dow">FRI</div><div class="dow">SAT</div>
   </div>
+
   <div class="day-grid" id="grid"></div>
 
+  <!-- Detail panel -->
   <div class="detail" id="detail">
     <div class="detail-head">
       <span class="detail-date-label" id="detailLabel"></span>
-      <button class="detail-add-btn" onclick="openForm()">+ 일정 추가</button>
+      <a class="detail-notion-btn" href="https://notion.so/e24f05bad0d3448cb38939ef1b11c98f" target="_blank">
+        노션에서 일정 추가 →
+      </a>
     </div>
     <div class="detail-body">
       <div id="evList"></div>
     </div>
-    <div class="add-form" id="addForm">
+    <div class="status-bar" id="statusBar" style="display:none">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText"></span>
+    </div>
+  </div>
 
-      <!-- 단일/기간 토글 -->
-      <div class="mode-toggle">
-        <button class="mode-btn active" id="modeOne" onclick="setMode('single')">하루</button>
-        <button class="mode-btn" id="modeRange" onclick="setMode('range')">기간</button>
-      </div>
-
-      <div class="form-section">
-        <span class="form-label">일정 이름</span>
-        <div class="form-row">
-          <input class="form-input" id="evInput" placeholder="예: 해외여행" onkeydown="if(event.key==='Enter')saveEvent()" />
-          <select class="form-select" id="evCat">
-            <option value="ev-personal">개인</option>
-            <option value="ev-work">업무</option>
-            <option value="ev-meet">약속</option>
-            <option value="ev-memo">메모</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-section" id="dateSection">
-        <span class="form-label" id="dateSectionLabel">날짜</span>
-        <div class="date-range-row" id="dateRangeRow">
-          <input class="form-date" type="date" id="startDate" />
-          <span class="date-sep" id="dateSep" style="display:none">→</span>
-          <input class="form-date" type="date" id="endDate" style="display:none" />
-        </div>
-      </div>
-
-      <div class="form-row">
-        <button class="form-save" onclick="saveEvent()">저장</button>
-        <button class="form-cancel" onclick="closeForm()">취소</button>
-      </div>
+  <!-- Config panel -->
+  <div class="config-panel" id="configPanel">
+    <div class="config-title">NOTION API 설정</div>
+    <div class="config-row">
+      <span class="config-label">API Key</span>
+      <input class="config-input" id="apiKeyInput" type="password" placeholder="secret_xxxxxxxxxxxx" />
+    </div>
+    <div class="config-row">
+      <button class="config-save" onclick="saveConfig()">저장 후 불러오기</button>
+    </div>
+    <div class="config-note">
+      노션 API 키는 notion.so/my-integrations 에서 발급받을 수 있어요.<br>
+      저장된 키는 이 브라우저에만 보관되며 외부로 전송되지 않아요.
     </div>
   </div>
 
@@ -195,74 +163,128 @@ html, body { background: var(--bg); font-family: var(--font); color: var(--text-
       <div class="leg"><div class="leg-dot" style="background:var(--personal-dot)"></div>개인</div>
       <div class="leg"><div class="leg-dot" style="background:var(--work-dot)"></div>업무</div>
       <div class="leg"><div class="leg-dot" style="background:var(--meet-dot)"></div>약속</div>
-      <div class="leg"><div class="leg-dot" style="background:var(--memo-dot)"></div>메모</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--anni-dot)"></div>기념일</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--memo-dot)"></div>기타</div>
     </div>
     <div class="week-count" id="weekCount"></div>
   </div>
+
 </div>
 
 <script>
 const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const MONTHS_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 const DAYS_KR = ['일','월','화','수','목','금','토'];
-const CAT_LABEL = {'ev-work':'업무','ev-personal':'개인','ev-meet':'약속','ev-memo':'메모'};
-const DOT_COLOR = {'ev-work':'var(--work-dot)','ev-personal':'var(--personal-dot)','ev-meet':'var(--meet-dot)','ev-memo':'var(--memo-dot)'};
-const BADGE_STYLE = {
-  'ev-work':     'background:var(--work-bg);color:var(--work-text)',
-  'ev-personal': 'background:var(--personal-bg);color:var(--personal-text)',
-  'ev-meet':     'background:var(--meet-bg);color:var(--meet-text)',
-  'ev-memo':     'background:var(--memo-bg);color:var(--memo-text)',
+const DB_ID = 'e24f05bad0d3448cb38939ef1b11c98f';
+const CAT_DOT = {
+  '업무': 'var(--work-dot)', '개인': 'var(--personal-dot)',
+  '약속': 'var(--meet-dot)', '기념일': 'var(--anni-dot)', '기타': 'var(--memo-dot)'
 };
-const STORAGE_KEY = 'cal_events_v2';
+const CAT_BADGE = {
+  '업무': 'background:var(--work-bg);color:var(--work-text)',
+  '개인': 'background:var(--personal-bg);color:var(--personal-text)',
+  '약속': 'background:var(--meet-bg);color:var(--meet-text)',
+  '기념일': 'background:var(--anni-bg);color:var(--anni-text)',
+  '기타': 'background:var(--memo-bg);color:var(--memo-text)',
+};
+
 const today = new Date();
 let cur = new Date(today.getFullYear(), today.getMonth(), 1);
 let selectedKey = null;
-let inputMode = 'single'; // 'single' | 'range'
+let allEvents = [];
 
-function toKey(y, m, d) { return `${y}-${m+1}-${d}`; }
-function keyToDate(k) { const [y,m,d]=k.split('-').map(Number); return new Date(y,m-1,d); }
-function dateToKey(dt) { return `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()}`; }
-function fmtDate(dt) { return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`; }
+function getApiKey() { return localStorage.getItem('notion_api_key') || ''; }
+function saveConfig() {
+  const k = document.getElementById('apiKeyInput').value.trim();
+  if (!k) return;
+  localStorage.setItem('notion_api_key', k);
+  document.getElementById('configPanel').classList.remove('open');
+  fetchEvents();
+}
+function toggleConfig() {
+  const p = document.getElementById('configPanel');
+  p.classList.toggle('open');
+  if (p.classList.contains('open')) {
+    document.getElementById('apiKeyInput').value = getApiKey();
+  }
+}
 
-function loadEvents() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); } catch { return []; } }
-function saveEventsRaw(arr) { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
+function go(d) { cur = new Date(cur.getFullYear(), cur.getMonth()+d, 1); render(); }
+function goToday() { cur = new Date(today.getFullYear(), today.getMonth(), 1); render(); }
 
-/* Returns {key: [evs]} map for the given year/month */
+/* ── Fetch from Notion API ── */
+async function fetchEvents() {
+  const key = getApiKey();
+  if (!key) { document.getElementById('configPanel').classList.add('open'); return; }
+
+  const btn = document.getElementById('syncBtn');
+  btn.classList.add('spinning');
+  setStatus('loading', '노션에서 불러오는 중...');
+
+  try {
+    const res = await fetch(`https://api.anthropic.com/v1/messages`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `You are a Notion API proxy. The user will give you a Notion API key and database ID. Call the Notion API to fetch all pages from the database and return them as a JSON array. Each item should have: id, name (일정 이름), start (날짜 start, YYYY-MM-DD), end (날짜 end, YYYY-MM-DD or null), category (카테고리). Return ONLY valid JSON array, no other text.`,
+        messages: [{
+          role: 'user',
+          content: `Notion API Key: ${key}\nDatabase ID: ${DB_ID}\n\nFetch all pages from this Notion database and return as JSON array with fields: id, name, start, end, category.`
+        }]
+      })
+    });
+
+    if (!res.ok) throw new Error('API 오류');
+    const data = await res.json();
+    const text = data.content.map(b => b.text || '').join('');
+    const clean = text.replace(/```json|```/g, '').trim();
+    allEvents = JSON.parse(clean);
+    render();
+    setStatus('ok', `${allEvents.length}개 일정 불러옴 · ${new Date().toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'})}`);
+  } catch(e) {
+    setStatus('error', '불러오기 실패 — API 키를 확인해주세요');
+  } finally {
+    btn.classList.remove('spinning');
+  }
+}
+
+function setStatus(type, msg) {
+  const bar = document.getElementById('statusBar');
+  const dot = document.getElementById('statusDot');
+  const txt = document.getElementById('statusText');
+  bar.style.display = 'flex';
+  dot.className = 'status-dot' + (type === 'error' ? ' error' : type === 'loading' ? ' loading' : '');
+  txt.textContent = msg;
+}
+
+/* ── Build month map ── */
 function getMonthMap(y, m) {
-  const all = loadEvents();
   const map = {};
   const first = new Date(y, m, 1);
   const last  = new Date(y, m+1, 0);
-  all.forEach((ev, idx) => {
-    const s = keyToDate(ev.start);
-    const e = ev.end ? keyToDate(ev.end) : s;
-    // iterate days in this event that fall within the month
-    for (let dt = new Date(Math.max(s, first)); dt <= Math.min(e, last); dt.setDate(dt.getDate()+1)) {
-      const k = dateToKey(new Date(dt));
+  allEvents.forEach(ev => {
+    if (!ev.start) return;
+    const s = new Date(ev.start);
+    const e = ev.end ? new Date(ev.end) : new Date(ev.start);
+    for (let dt = new Date(Math.max(s, first)); dt <= new Date(Math.min(e, last)); dt.setDate(dt.getDate()+1)) {
+      const k = `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()}`;
       if (!map[k]) map[k] = [];
-      const isStart = dateToKey(s) === k;
-      const isEnd   = dateToKey(e) === k;
-      const isRange = ev.end && ev.end !== ev.start;
-      map[k].push({...ev, _idx: idx, _isStart: isStart, _isEnd: isEnd, _isRange: isRange});
+      map[k].push(ev);
     }
   });
   return map;
 }
-
-/* ── Nav ── */
-function go(d) { cur = new Date(cur.getFullYear(), cur.getMonth()+d, 1); render(); }
-function goToday() { cur = new Date(today.getFullYear(), today.getMonth(), 1); render(); }
 
 /* ── Render ── */
 function render() {
   const y = cur.getFullYear(), m = cur.getMonth();
   document.getElementById('monthName').textContent = MONTHS_EN[m];
   document.getElementById('yearTag').textContent = y;
-
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
   const map = getMonthMap(y, m);
-
   const firstDay = new Date(y, m, 1).getDay();
   const dim = new Date(y, m+1, 0).getDate();
   const dip = new Date(y, m, 0).getDate();
@@ -270,16 +292,14 @@ function render() {
   for (let i = firstDay-1; i>=0; i--) cells.push({d: dip-i, other:true});
   for (let d=1; d<=dim; d++) cells.push({d, other:false});
   while (cells.length%7!==0) cells.push({d: cells.length-dim-firstDay+1, other:true});
-
   document.getElementById('weekCount').textContent = (cells.length/7)+' WEEKS';
 
   cells.forEach(({d, other}, idx) => {
     const dow = idx%7;
-    const k = toKey(y, m, d);
+    const k = `${y}-${m+1}-${d}`;
     const evs = (!other && map[k]) ? map[k] : [];
     const isToday = !other && d===today.getDate() && m===today.getMonth() && y===today.getFullYear();
     const isSel = !other && k===selectedKey;
-
     const cell = document.createElement('div');
     let cls = 'cell';
     if (other) cls += ' other-month';
@@ -289,130 +309,61 @@ function render() {
     if (!other && evs.length>0) cls += ' has-events';
     if (isSel) cls += ' selected';
     cell.className = cls;
-
     const nw = document.createElement('div'); nw.className='num-wrap';
     const n = document.createElement('div'); n.className='num'; n.textContent=d;
     nw.appendChild(n); cell.appendChild(nw);
-
     evs.slice(0,2).forEach(ev => {
       const tag = document.createElement('div');
-      let evCls = 'ev ' + ev.cat;
-      if (ev._isRange) {
-        if (ev._isStart && ev._isEnd) evCls += '';
-        else if (ev._isStart) evCls += ' range-start';
-        else if (ev._isEnd)   evCls += ' range-end';
-        else                   evCls += ' range-mid';
-      }
-      tag.className = evCls;
-      tag.textContent = ev._isRange && !ev._isStart ? '·' : ev.name;
+      tag.className = 'ev ev-' + (ev.category || '기타');
+      tag.textContent = ev.name || '(제목 없음)';
       cell.appendChild(tag);
     });
     if (evs.length>2) {
-      const more = document.createElement('div');
-      more.className='ev-more'; more.textContent='+'+(evs.length-2);
-      cell.appendChild(more);
+      const more = document.createElement('div'); more.className='ev-more';
+      more.textContent='+'+(evs.length-2); cell.appendChild(more);
     }
-
-    if (!other) cell.onclick = () => selectDay(k, d, y, m);
+    if (!other) cell.onclick = () => selectDay(k, d, y, m, evs);
     grid.appendChild(cell);
   });
 }
 
-/* ── Select day ── */
-function selectDay(k, d, y, m) {
+function selectDay(k, d, y, m, evs) {
   if (selectedKey===k) { selectedKey=null; document.getElementById('detail').classList.remove('open'); render(); return; }
   selectedKey = k;
   const dow = new Date(y, m, d).getDay();
   document.getElementById('detailLabel').textContent = `${y}년 ${MONTHS_KR[m]} ${d}일 (${DAYS_KR[dow]})`;
-  closeForm();
-  renderEvList(k);
+  const list = document.getElementById('evList');
+  list.innerHTML = '';
+  if (!evs || evs.length===0) { list.innerHTML='<div class="ev-empty">이날 일정이 없어요</div>'; }
+  else {
+    evs.forEach(ev => {
+      const row = document.createElement('div'); row.className='ev-row';
+      const isRange = ev.end && ev.end !== ev.start;
+      const rangeTag = isRange ? `<span class="ev-range-tag">${ev.start} → ${ev.end}</span>` : '';
+      const cat = ev.category || '기타';
+      row.innerHTML = `
+        <div class="ev-dot" style="background:${CAT_DOT[cat]||'#ccc'}"></div>
+        <span class="ev-name">${esc(ev.name||'')}</span>
+        ${rangeTag}
+        <span class="ev-cat-badge" style="${CAT_BADGE[cat]||''}">${cat}</span>`;
+      list.appendChild(row);
+    });
+  }
+  document.getElementById('statusBar').style.display = 'none';
   document.getElementById('detail').classList.add('open');
   render();
 }
 
-/* ── Event list ── */
-function renderEvList(k) {
-  const all = loadEvents();
-  const dt = keyToDate(k);
-  const list = document.getElementById('evList');
-  list.innerHTML = '';
-  // find events that cover this date
-  const relevant = all.map((ev,i) => ({...ev,_idx:i})).filter(ev => {
-    const s = keyToDate(ev.start);
-    const e = ev.end ? keyToDate(ev.end) : s;
-    return dt >= s && dt <= e;
-  });
-  if (relevant.length===0) { list.innerHTML='<div class="ev-empty">등록된 일정이 없어요</div>'; return; }
-  relevant.forEach(ev => {
-    const row = document.createElement('div'); row.className='ev-row';
-    const isRange = ev.end && ev.end !== ev.start;
-    const rangeTag = isRange ? `<span class="ev-range-tag">${ev.start} → ${ev.end}</span>` : '';
-    row.innerHTML = `
-      <div class="ev-dot" style="background:${DOT_COLOR[ev.cat]}"></div>
-      <span class="ev-name">${esc(ev.name)}</span>
-      ${rangeTag}
-      <span class="ev-cat-badge" style="${BADGE_STYLE[ev.cat]}">${CAT_LABEL[ev.cat]}</span>
-      <button class="ev-del" onclick="deleteEvent(${ev._idx})">×</button>`;
-    list.appendChild(row);
-  });
-}
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-/* ── Form mode ── */
-function setMode(m) {
-  inputMode = m;
-  document.getElementById('modeOne').classList.toggle('active', m==='single');
-  document.getElementById('modeRange').classList.toggle('active', m==='range');
-  document.getElementById('dateSep').style.display = m==='range' ? '' : 'none';
-  document.getElementById('endDate').style.display  = m==='range' ? '' : 'none';
-  document.getElementById('dateSectionLabel').textContent = m==='range' ? '기간' : '날짜';
-}
-
-function openForm() {
-  // prefill start date from selectedKey
-  if (selectedKey) {
-    const [y,mo,d] = selectedKey.split('-').map(Number);
-    document.getElementById('startDate').value = `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    document.getElementById('endDate').value = '';
-  }
-  document.getElementById('addForm').classList.add('open');
-  setTimeout(()=>document.getElementById('evInput').focus(), 50);
-}
-function closeForm() {
-  document.getElementById('addForm').classList.remove('open');
-  document.getElementById('evInput').value = '';
-  setMode('single');
-}
-
-/* ── Save ── */
-function saveEvent() {
-  const name = document.getElementById('evInput').value.trim();
-  const cat  = document.getElementById('evCat').value;
-  const start = document.getElementById('startDate').value;
-  const end   = inputMode==='range' ? document.getElementById('endDate').value : '';
-  if (!name) { document.getElementById('evInput').focus(); return; }
-  if (!start) { document.getElementById('startDate').focus(); return; }
-  if (inputMode==='range' && end && end < start) { alert('종료일이 시작일보다 빠릅니다.'); return; }
-
-  const all = loadEvents();
-  all.push({ name, cat, start, end: (inputMode==='range' && end) ? end : '' });
-  saveEventsRaw(all);
-  closeForm();
-  if (selectedKey) renderEvList(selectedKey);
-  render();
-}
-
-/* ── Delete ── */
-function deleteEvent(idx) {
-  const all = loadEvents();
-  all.splice(idx, 1);
-  saveEventsRaw(all);
-  if (selectedKey) renderEvList(selectedKey);
-  render();
-}
-
-function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
+// 초기 로드
 render();
+if (getApiKey()) fetchEvents();
+else {
+  setTimeout(() => {
+    document.getElementById('configPanel').classList.add('open');
+  }, 300);
+}
 </script>
 </body>
 </html>
